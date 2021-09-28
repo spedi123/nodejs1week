@@ -1,0 +1,107 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS & Bulma -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>Peter's Blog</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Jua', sans-serif;
+        }
+    </style>
+
+    <script>
+        function home() {
+            window.location.href = "/"
+        }
+
+        function posting() {
+            let date = new Date();
+            let title = $('#title').val();
+            let name = $('#name').val();
+            let password = $('#password').val();
+            let content = $('#content').val();
+            console.log(title, name, password, content, date)
+            $.ajax({
+                type: "POST",
+                url: `/api/posting`,
+                data: {
+                    'title': title,
+                    'name': name,
+                    'password': password,
+                    'content': content,
+                    'date': date
+                },
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        window.location.href = "/"
+                    }
+                }
+            });
+        }
+    </script>
+
+</head>
+
+<body>
+    <div class="jumbotron">
+        <h1 class="display-4">My Hanghae Blog</h1>
+        <p class="lead">99일간의 항행의 기록...</p>
+        <hr class="my-4">
+    </div>
+    <section class="section">
+        <div class="container">
+            <div class="field">
+                <label class="label">이름</label>
+                <div class="control">
+                    <input id="name" class="input" type="text" placeholder="이름 입력란">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">비밀번호</label>
+                <div class="control">
+                    <input id="password" class="input" type="password" placeholder="비밀번호 입력란">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">제목</label>
+                <div class="control">
+                    <input id="title" class="input" type="text" placeholder="제목 입력란">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">내용</label>
+                <div class="control">
+                    <textarea id="content" class="textarea" placeholder="내용 입력란"></textarea>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="btn btn-primary" onclick="posting()">작성완료</button>
+                    <button class="btn btn-primary" onclick="home()">취소</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

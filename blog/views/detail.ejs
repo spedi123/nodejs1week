@@ -1,0 +1,94 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS & Bulma -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>Peter's Blog</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Jua', sans-serif;
+        }
+    </style>
+
+    <script>
+        // const queryString = window.location.search;
+        // const urlParams = new URLSearchParams(queryString)
+        // const postingId = urlParams.get("postingId")
+        $(document).ready(function () {
+                search_detail()
+            })
+        function edit() {
+            window.location.href = "/edit"
+        }    
+        function search_detail() {
+        $.ajax({
+            type: "GET",
+            url: `/api/posting/${postingId}`,
+            data: {},
+            success: function (response) {
+                console.log(response)
+                let postingDetail = response["detail"]
+                let temp_html = `<div class="field">
+                                    <label class="label">이름</label>
+                                    <div class="control">
+                                        <input id="name" class="input" type="text" value="${postingDetail["name"]}">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">제목</label>
+                                    <div class="control">
+                                        <input id="title" class="input" type="text" value="${postingDetail["title"]}">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">내용</label>
+                                    <div class="control">
+                                        <textarea id="content" class="textarea">${postingDetail["content"]}</textarea>
+                                    </div>
+                                </div>
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <button class="btn btn-primary" onclick="location.href='/edit?postingId=${postingDetail["postingId"]}'">수정</button>
+                                        <button class="btn btn-primary" onclick="window.location.href = '/'">메인화면 돌아가기</button>
+                                    </div>
+                                </div>`
+                $('.container').append(temp_html)
+            }
+        })
+    }
+    </script>
+
+</head>
+
+<body>
+    <div class="jumbotron">
+        <h1 class="display-4">My Hanghae Blog</h1>
+        <p class="lead">99일간의 항행의 기록...</p>
+        <hr class="my-4">
+    </div>
+    <section class="section">
+        <div class="container">
+        </div>
+    </section>
+</body>
+
+</html>
