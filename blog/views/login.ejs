@@ -1,0 +1,118 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS & Bulma -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>Peter's Blog</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Jua', sans-serif;
+        }
+
+        .container {
+            width: 500px;
+            border: 3px solid black;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            if (localStorage.getItem("token")) {
+                alert('이미 로그인 되어 있습니다.')
+                window.location.href="/";
+            } 
+        });
+        function login() {
+            let nickname = $("#nickname").val();
+            let password = $("#password").val();
+            $.ajax({
+                type: "POST",
+                url: `/api/auth`,
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`
+                },
+                data: {
+                    'nickname': nickname,
+                    'password': password,
+                },
+                success: function (response) {
+                    localStorage.setItem("token", response.token);
+                    window.location.replace("/");
+                },
+            });
+        }
+        function customAlert(text) {
+        $("#alertText").text(text);
+        $("#alertModal").modal("show");
+        }
+    </script>
+</head>
+
+<body>
+    <div class="jumbotron">
+        <h1 class="display-4" onclick="window.location.href='/'">My Hanghae Blog</h1>
+        <p class="lead">99일간의 항행의 기록...</p>
+        <hr class="my-4">
+    </div>
+    <div>
+        <section class="section">
+            <div class="container" id="login-box">
+                <div class="box" style="max-width: 480px;margin:auto">
+                    <article class="media">
+                        <div class="media-content">
+                            <div class="content">
+                                <div class="field has-addons">
+                                    <div class="control has-icons-left" style="width:100%">
+                                        <input id="nickname" class="input" type="text" placeholder="아이디">
+                                        <span class="icon is-small is-left"><i class="fa fa-user"></i></span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="control has-icons-left">
+                                        <input id="password" class="input" type="password" placeholder="비밀번호">
+                                        <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="div-sign-in-or-up" class="has-text-centered">
+                                <nav class="level is-mobile">
+                                    <button class="level-item button" id='btn-login' onclick="login()">
+                                        로그인
+                                    </button>
+                                </nav>
+                                <hr>
+                                <nav class="level is-mobile">
+                                    <button class="level-item button is-outlined" id="btn-register-register"
+                                        onclick="window.location.href = '/register'">
+                                        회원가입하기
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>

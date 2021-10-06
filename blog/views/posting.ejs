@@ -27,9 +27,16 @@
         * {
             font-family: 'Jua', sans-serif;
         }
+        .nav {
+            float: right;
+        }
     </style>
 
     <script>
+         $(document).ready(function () {
+            error();
+         });
+
         function home() {
             window.location.href = "/"
         }
@@ -44,6 +51,9 @@
             $.ajax({
                 type: "POST",
                 url: `/api/posting`,
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`
+                },
                 data: {
                     'title': title,
                     'name': name,
@@ -55,16 +65,26 @@
                     if (response["result"] == "success") {
                         window.location.href = "/"
                     }
-                }
+                },
+                error: function (error) {
+                    alert(error.responseJSON.errorMessage)
+                },
             });
         }
+
+        function logout() {
+        localStorage.clear();
+        window.location.href = "/";
+        }
+
     </script>
 
 </head>
 
 <body>
     <div class="jumbotron">
-        <h1 class="display-4">My Hanghae Blog</h1>
+        <button class="button is-success is-inverted nav" id="btn-navbar" onclick="logout()">로그아웃</button>
+         <h1 class="display-4" onclick="window.location.href='/'">My Hanghae Blog</h1>
         <p class="lead">99일간의 항행의 기록...</p>
         <hr class="my-4">
     </div>

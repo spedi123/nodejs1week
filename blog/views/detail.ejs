@@ -27,6 +27,9 @@
         * {
             font-family: 'Jua', sans-serif;
         }
+        .nav {
+            float: right;
+        }
     </style>
 
     <script>
@@ -35,52 +38,78 @@
         const postingId = urlParams.get("postingId")
 
         $(document).ready(function () {
-                search_detail()
-            })
+            search_detail();
+            if (localStorage.getItem("token")) {
+                $('#btn-navbar').hide()
+                $('#btn-navbar1').show()
+            } else {
+                $('#btn-navbar').show()
+                $('#btn-navbar1').hide()
+            }
+        });
+
+        function checkToken () {
+            if (!token) {
+                alert('로그인이 필요한 기능입니다.');
+                window.location.href = '/login'
+            } else {
+                let moveTo = "?postingId" + postingId_toEdit
+                window.location.href = "/edit" + moveTo
+            }
+        }
 
         function search_detail() {
-        $.ajax({
-            type: "GET",
-            url: `/api/posting/${postingId}`,
-            data: {},
-            success: function (response) {
-                console.log(response)
-                let postingDetail = response["detail"]
-                let temp_html = `<div class="field">
-                                    <label class="label">이름</label>
-                                    <div class="control">
-                                        <input id="name" class="input" type="text" value="${postingDetail["name"]}">
-                                    </div>
-                                </div>
-                                <div class="field">
-                                    <label class="label">제목</label>
-                                    <div class="control">
-                                        <input id="title" class="input" type="text" value="${postingDetail["title"]}">
-                                    </div>
-                                </div>
-                                <div class="field">
-                                    <label class="label">내용</label>
-                                    <div class="control">
-                                        <textarea id="content" class="textarea">${postingDetail["content"]}</textarea>
-                                    </div>
-                                </div>
-                                <div class="field is-grouped">
-                                    <div class="control">
-                                        <button class="btn btn-primary" onclick="location.href='/edit?postingId=${postingDetail["postingId"]}'">수정</button>
-                                        <button class="btn btn-primary" onclick="window.location.href = '/'">메인화면 돌아가기</button>
-                                    </div>
-                                </div>`
-                $('.container').append(temp_html)
-            }
-        })
-    }
+            $.ajax({
+                type: "GET",
+                url: `/api/posting/${postingId}`,
+                headers: {
+                        authorization: `Bearer ${localStorage.getItem("token")}`
+                    },
+                data: {},
+                success: function (response) {
+                    console.log(response)
+                    let postingDetail = response["detail"]
+                    let temp_html = `<div class="field">
+                                            <label class="label">이름</label>
+                                            <div class="control">
+                                                <input id="name" class="input" type="text" value="${postingDetail["name"]}">
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label class="label">제목</label>
+                                            <div class="control">
+                                                <input id="title" class="input" type="text" value="${postingDetail["title"]}">
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label class="label">내용</label>
+                                            <div class="control">
+                                                <textarea id="content" class="textarea">${postingDetail["content"]}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="field is-grouped">
+                                            <div class="control">
+                                                <button class="btn btn-primary" onclick="location.href='/edit?postingId=${postingDetail["postingId"]}'">수정</button>
+                                                <button class="btn btn-primary" onclick="window.location.href = '/'">메인화면 돌아가기</button>
+                                            </div>
+                                        </div>`
+                                    $('.container').append(temp_html)
+                },
+                error: function (error) {
+                    alert(error.responseJSON.errorMessage)
+                },
+            })
+        }
+
     </script>
 
 </head>
 
 <body>
     <div class="jumbotron">
-        <h1 class="display-4">My Hanghae Blog</h1>
+        <!-- <button class="button is-success is-inverted nav" id="btn-navbar" onclick="window.location.href = '/login'">로그인</button>
+        <button class="button is-success is-inverted nav" id="btn-navbar1" onclick="logout()">로그아웃</button> -->
+        <h1 class="display-4" onclick="window.location.href='/'">My Hanghae Blog</h1>
         <p class="lead">99일간의 항행의 기록...</p>
         <hr class="my-4">
     </div>

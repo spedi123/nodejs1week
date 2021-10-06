@@ -27,6 +27,9 @@
         * {
             font-family: 'Jua', sans-serif;
         }
+        .nav {
+            float: right;
+        }
     </style>
 
     <script>
@@ -35,13 +38,25 @@
     const postingId = urlParams.get("postingId")
 
     $(document).ready(function () {
-        search_edit()
-    })
+        search_edit();
+        // if (localStorage.getItem("token")) {
+        //     $('#btn-navbar').hide()
+        //     $('#btn-navbar1').show()
+        //     $('#button1').show()
+        // } else {
+        //     $('#btn-navbar').show()
+        //     $('#btn-navbar1').hide()
+        //     $('#button1').hide()
+        // }
+    });
 
     function search_edit() {
         $.ajax({
             type: "GET",
             url: `/api/posting/${postingId}`,
+            headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`
+                },
             data: {},
             success: function (response) {
                 console.log(response)
@@ -83,6 +98,9 @@
             $.ajax({
                 type: "POST",
                 url: `/api/posting/${postingId}`,
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`
+                },
                 data: {
                     'title': title,
                     'name': name,
@@ -95,7 +113,10 @@
                     if (response['result'] == 'success') {
                     }
                     window.location.href = "/"
-                }
+                },
+                error: function (error) {
+                    alert(error.responseJSON.errorMessage)
+                },
             })
         }
 
@@ -107,6 +128,9 @@
         $.ajax({
             type: "POST",
             url: `/api/posting/${postingId}/delete`,
+            headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`
+                },
             data: {
                 'title': title,
                 'name': name,
@@ -119,25 +143,35 @@
                 if (response['result'] == 'success') {
                 }
                 window.location.href = "/"
-            }
+            },
+            error: function (error) {
+                alert(error.responseJSON.errorMessage)
+            },
         })
     }
+    function logout() {
+        localStorage.clear();
+        window.location.href = '/';
+    }
+
 </script>
 </head>
 
 <body>
     <div class="jumbotron">
-        <h1 class="display-4">My Hanghae Blog</h1>
+        <button class="button is-success is-inverted nav" id="btn-navbar" onclick="window.location.href = '/login'">로그인</button>
+        <button class="button is-success is-inverted nav" id="btn-navbar1" onclick="logout()">로그아웃</button>
+        <h1 class="display-4" onclick="window.location.href='/'">My Hanghae Blog</h1>
         <p class="lead">99일간의 항행의 기록...</p>
         <hr class="my-4">
     </div>
     <section class="section">
         <div class="container"> </div>
         <div class="field is-grouped">
-            <div class="control">
-                <button class="button is-link" onclick="amends()">수정완료</button>
-                <button class="button is-link" onclick="deletes()">삭제</button>
-                <button class="button is-link" onclick="window.location.href = '/'">취소</button>
+            <div class="control" id=button1>
+                <button class="button is-link" id="button4" onclick="amends()">수정완료</button>
+                <button class="button is-link" id="button2" onclick="deletes()">삭제</button>
+                <button class="button is-link" id="button3" onclick="window.location.href = '/'">취소</button>
             </div>
         </div>
     </section>

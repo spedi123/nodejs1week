@@ -27,13 +27,23 @@
         * {
             font-family: 'Jua', sans-serif;
         }
+        .nav {
+            float: right;
+        }
     </style>
 
     <script>
     $(document).ready(function () {
-        $('.container').empty()
-        search_posting()
-    })
+        search_posting();
+        if (localStorage.getItem("token")) {
+            $('#btn-navbar').hide()
+            $('#btn-navbar1').show()
+        } else {
+            $('#btn-navbar').show()
+            $('#btn-navbar1').hide()
+            $('#btn-posting-box').hide()
+        }
+    });
 
     function search_posting() {
         $.ajax({
@@ -65,12 +75,19 @@
             }
         })
     }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = '/';
+    }
     </script>
 </head>
 
 <body>
     <div class="jumbotron">
-        <h1 class="display-4">My Hanghae Blog</h1>
+        <button class="button is-success is-inverted nav" id="btn-navbar" onclick="window.location.href = '/login'">로그인</button>
+        <button class="button is-success is-inverted nav" id="btn-navbar1" onclick="logout()">로그아웃</button>
+        <h1 class="display-4" onclick="window.location.href='/'">My Hanghae Blog</h1>
         <p class="lead">99일간의 항행의 기록...</p>
         <hr class="my-4">
         <p class="lead">
@@ -81,5 +98,4 @@
         <div class="container"> </div>
     </section>
 </body>
-
 </html>

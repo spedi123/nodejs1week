@@ -1,9 +1,10 @@
 const express = require("express")
 const Postings = require("../schemas/posting")
 const router = express.Router()
+const authMiddleware = require('../middlewares/auth-middleware')
 
 // 게시글 작성
-router.post('/posting', async (req, res) => {
+router.post('/posting', authMiddleware, async (req, res) => {
     console.log(req.body)
     const { title, name, password, content, date } = req.body;
     let postingId = await Postings.find({}).sort("-postingId").limit(1);
@@ -36,8 +37,18 @@ router.get('/posting/:postingId', async (req, res) => {
     }
 })
 
+// router.get('/posting/:postingId', authMiddleware, async (req, res) => {
+//     try {
+//         const { postingId } = req.params;
+//         const posting1 = await Postings.findOne({ postingId: postingId });
+//         console.log(posting1)
+//         res.json({ detail1: posting1 })
+//     } catch (err) {
+//     }
+// })
+
 // 게시글 수정
-router.post("/posting/:postingId", async (req, res) => {
+router.post("/posting/:postingId", authMiddleware, async (req, res) => {
     try {
         const { postingId } = req.params;
         const { title, name, content, password } = req.body;
@@ -51,11 +62,13 @@ router.post("/posting/:postingId", async (req, res) => {
             res.send({ result: "비밀번호가 틀렸습니다." })
         }
     } catch (err) {
+        console.error(err);
+        next(err);
     }
 })
 
 // 게시글 삭제
-router.post("/posting/:postingId/delete", async (req, res) => {
+router.post("/posting/:postingId/delete", authMiddleware, async (req, res) => {
     try {
         const { postingId } = req.params;
         const { password } = req.body;
@@ -70,5 +83,6 @@ router.post("/posting/:postingId/delete", async (req, res) => {
     } catch (err) {
     }
 })
+
 
 module.exports = router;
