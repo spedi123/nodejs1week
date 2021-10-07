@@ -13,12 +13,15 @@ connect();
 
 const postingRouter = require("./routers/posting");
 const userRouter = require("./routers/user");
+const commentRouter = require("./routers/comment");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/api", [postingRouter]);
 app.use("/api", [userRouter]);
+app.use("/api", [commentRouter]);
+
 
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");

@@ -39,6 +39,8 @@
 
         $(document).ready(function () {
             search_detail();
+            search_comment();
+
             if (localStorage.getItem("token")) {
                 $('#btn-navbar').hide()
                 $('#btn-navbar1').show()
@@ -47,16 +49,6 @@
                 $('#btn-navbar1').hide()
             }
         });
-
-        function checkToken () {
-            if (!token) {
-                alert('로그인이 필요한 기능입니다.');
-                window.location.href = '/login'
-            } else {
-                let moveTo = "?postingId" + postingId_toEdit
-                window.location.href = "/edit" + moveTo
-            }
-        }
 
         function search_detail() {
             $.ajax({
@@ -93,7 +85,7 @@
                                                 <button class="btn btn-primary" onclick="window.location.href = '/'">메인화면 돌아가기</button>
                                             </div>
                                         </div>`
-                                    $('.container').append(temp_html)
+                                    $('.container1').append(temp_html)
                 },
                 error: function (error) {
                     alert(error.responseJSON.errorMessage)
@@ -101,20 +93,168 @@
             })
         }
 
+        function post_comment() {
+            let description = $('#comment').val();
+
+            if (description === '') { 
+                alert("댓글 내용을 입력해 주세요.")
+                window.location.reload()
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/api/comment",
+                data: {
+                    postingId,
+                    description: description,
+                },
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        alert("댓글이 작성되었습니다.")
+                    }
+                    window.location.reload()
+                },
+                error: function (error) {
+                    console.log("error");
+                    alert(error.responseJSON.errorMessage);
+                    window.location.href = "/login";
+                }
+            })  
+        }
+        function search_comment(){
+            $.ajax({
+                type: "GET",
+                url: `/api/comment/${postingId}`,
+                data: {},
+                success: function (response) {
+                    let comment = response["comment"]
+                    for ( let i = 0; i < comment.length; i++ ) {
+                        let userId = comment[i]['userId']
+                        let description = comment[i]['description']
+                        let date = comment[i]['date']
+                        let commentId=comment[i]['commentId']
+                        let temp_html=`
+                            <div class="d-flex flex-row comment-row m-t-0">
+                                    <h6 class="font-medium">${userId}</h6> 
+                                    <br>
+                                    <span id="desc${commentId}" class="m-b-15 d-block">${description}</span>
+                                    <br>
+                                    <div class="comment-footer"> <span class="text-muted float-right">${date}</span></div>
+                                    <button onclick="modifyComment(${commentId})" id="btn-modify${commentId}" type="button" class="btn btn-cyan btn-sm">수정버튼</button>
+                                    <button onclick="deleteComment(${commentId})" id="btn-delete" type="button" class="btn btn-danger btn-sm">삭제버튼</button> </div>
+                            </div>`
+                        $('#commentList').append(temp_html)
+                    }
+                }
+            })
+        }
+
+        function deleteComment(commentId) {
+            if(confirm("삭제하시겠습니까?") == true) { 
+                $.ajax({
+                type: "DELETE",
+                url: `/api/comment`,
+                data: { commentId },
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                success: function(response) {
+                    if (response["result"] == "success") {
+                        alert('삭제완료!')
+                    } else {
+                        alert("권한이 없습니다!")
+                    }
+                    window.location.reload()
+                }
+                })   
+            }
+        }
+        function modifyComment(commentId) {
+            if ($('#btn-modify'+commentId).text() === '수정완료') {
+                $.ajax({
+                    type: "PUT",
+                    url: `/api/comment`,
+                    data: { 
+                        commentId, 
+                        description: $('#newDesc').val(),
+                    },
+                    headers: {
+                        authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        if (response["result"] == "success") {
+                            alert("수정 완료!")
+                        } else {
+                            alert(response["result"]) 
+                        }
+                        window.location.reload()
+                    }
+                    
+                })
+            }
+            let baseComment = $('#desc'+commentId).text() 
+            $('#desc'+commentId).empty()
+            $("#desc"+commentId).append(`<textarea id="newDesc">${baseComment}</textarea>`);
+            $('#btn-modify'+commentId).empty()
+            $('#btn-modify'+commentId).append(`수정완료`)
+            
+            
+        }
+        function makePost() {
+            window.location.href = '/new'
+        }
+        function modifyPost() {
+            window.location.href = `/modify/${postId}` 
+        }
+        function alert() {
+            if (localStorage.getItem("token")===null) {
+                alert("로그인이 필요한 기능입니다")
+                window.location.href = 'login'
+            }
+        }
+          function logout() {
+        localStorage.clear();
+        window.location.href = '/';
+        }
     </script>
 
 </head>
 
 <body>
     <div class="jumbotron">
-        <!-- <button class="button is-success is-inverted nav" id="btn-navbar" onclick="window.location.href = '/login'">로그인</button>
-        <button class="button is-success is-inverted nav" id="btn-navbar1" onclick="logout()">로그아웃</button> -->
+        <button class="button is-success is-inverted nav" id="btn-navbar" onclick="window.location.href = '/login'">로그인</button>
+        <button class="button is-success is-inverted nav" id="btn-navbar1" onclick="logout()">로그아웃</button>
         <h1 class="display-4" onclick="window.location.href='/'">My Hanghae Blog</h1>
         <p class="lead">99일간의 항행의 기록...</p>
         <hr class="my-4">
     </div>
     <section class="section">
-        <div class="container"> </div>
+        <div class="container1">
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">댓글입력</label>
+            <textarea onclick="alert()" class="form-control" id="comment" rows="3"></textarea>
+        </div>
+
+        <button class="btn btn-primary" onclick="post_comment()">댓글저장</button>
+
+        <div class="row d-flex justify-content-center mt-100 mb-100">
+            <div class="">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Comments</h4>
+                    </div>
+                    <div class="comment-widgets" id="commentList">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </section>
 </body>
 
