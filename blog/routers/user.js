@@ -5,6 +5,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const authMiddleware = require('../middlewares/auth-middleware')
 
+// 회원가입
 const postUsersSchema = Joi.object({
   nickname: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,20}$")),
   email: Joi.string().email().required(),
@@ -49,6 +50,8 @@ router.post("/user", async (req, res) => {
   }
 });
 
+// 로그인
+
 const postAuthSchema = Joi.object({
   nickname: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
   password: Joi.string().required().min(4),
@@ -72,18 +75,6 @@ router.post("/auth", async (req, res) => {
     });
   }
 });
-// router.post("/auth", async (req, res) => {
-//   const { nickname, password } = req.body;
-//   const users = await Users.findOne({ nickname, password }).exec();
-//   if (!users) {
-//     res
-//       .status(400)
-//       .send({ errorMessage: "닉네임 또는 패스워드가 잘못됐습니다." });
-//     return;
-//   }
-//   const token = jwt.sign({ userId: nickname }, "jason-secret-key");
-//   res.send({ token });
-// });
 
 router.get("/user/me", authMiddleware, async (req, res) => {
     const { user } = res.locals;

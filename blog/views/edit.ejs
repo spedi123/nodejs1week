@@ -39,17 +39,17 @@
 
     $(document).ready(function () {
         search_edit();
-        // if (localStorage.getItem("token")) {
-        //     $('#btn-navbar').hide()
-        //     $('#btn-navbar1').show()
-        //     $('#button1').show()
-        // } else {
-        //     $('#btn-navbar').show()
-        //     $('#btn-navbar1').hide()
-        //     $('#button1').hide()
-        // }
+        if (localStorage.getItem("token")) {
+            $('#btn-navbar').hide()
+            $('#btn-navbar1').show()
+            $('#button1').show()
+        } else {
+            $('#btn-navbar').show()
+            $('#btn-navbar1').hide()
+            $('#button1').hide()
+        }
     });
-
+    // 게시글 수정하도록 찾아오기
     function search_edit() {
         $.ajax({
             type: "GET",
@@ -89,7 +89,7 @@
             }
         })
     }
-
+    // 게시글 수정하기
     function amends() {
             let title = $('#title').val();
             let name = $('#name').val();
@@ -119,7 +119,7 @@
                 },
             })
         }
-
+    // 게시글 삭제하기
     function deletes() {
         let title = $('#title').val();
         let name = $('#name').val();
@@ -149,6 +149,7 @@
             },
         })
     }
+    // 로그아웃
     function logout() {
         localStorage.clear();
         window.location.href = '/';

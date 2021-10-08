@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const Comments = require("../schemas/comment")
 const authMiddleware = require("../middlewares/auth-middleware")
+const e = require("cors")
 
 router.post('/comment', authMiddleware, async (req, res) => {
     const { postingId } = req.body;
@@ -18,7 +19,7 @@ router.post('/comment', authMiddleware, async (req, res) => {
     const date = new Date()
     await Comments.create({ commentId, postingId, userId, description, date }) 
     res.send({ result: "success" })
-  })
+  }) 
 
 
 router.get("/comment/:postingId", async (req, res, next) => {
@@ -35,11 +36,11 @@ router.delete("/comment", authMiddleware, async (req, res) => {
     const { user } = res.locals
     const { commentId } = req.body
 
-    const tokenNickname = user["nickname"]
+    const postingNickname = user["nickname"]
     const userComment = await Comments.findOne({ commentId })
-    const dbNickname = userComment["userId"]
+    const commentNickname = userComment["userId"]
 
-    if ( tokenNickname === dbNickname ) {
+    if ( postingNickname === commentNickname ) {
         await Comments.deleteOne({ commentId })
         res.send({ result: "success" }) 
       } 
@@ -53,11 +54,11 @@ router.put("/comment", authMiddleware, async (req, res) => {
     const { user } = res.locals
     const { commentId, description } = req.body
 
-    const tokenNickname = user["nickname"] 
+    const postingNickname = user["nickname"] 
     const userComment1 = await Comments.findOne({ commentId }) 
-    const dbNickname = userComment1["userId"]
+    const commentNickname = userComment1["userId"]
 
-    if ( tokenNickname === dbNickname ) {
+    if ( postingNickname === commentNickname ) {
         await Comments.updateOne({ commentId }, { $set: { description } })
         res.send({ result: "success" })
       } else {

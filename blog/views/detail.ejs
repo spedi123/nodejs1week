@@ -49,7 +49,7 @@
                 $('#btn-navbar1').hide()
             }
         });
-
+        // 게시글 불러오기 
         function search_detail() {
             $.ajax({
                 type: "GET",
@@ -92,7 +92,7 @@
                 },
             })
         }
-
+        // 댓글 달기 
         function post_comment() {
             let description = $('#comment').val();
 
@@ -118,12 +118,12 @@
                     window.location.reload()
                 },
                 error: function (error) {
-                    console.log("error");
                     alert(error.responseJSON.errorMessage);
                     window.location.href = "/login";
                 }
             })  
         }
+        // 댓글 불러오기 
         function search_comment(){
             $.ajax({
                 type: "GET",
@@ -151,7 +151,7 @@
                 }
             })
         }
-
+        // 댓글 삭제
         function deleteComment(commentId) {
             if(confirm("삭제하시겠습니까?") == true) { 
                 $.ajax({
@@ -165,13 +165,18 @@
                     if (response["result"] == "success") {
                         alert('삭제완료!')
                     } else {
-                        alert("권한이 없습니다!")
+                        alert("로그인이 필요한 기능입니다.")
                     }
                     window.location.reload()
+                },
+                error: function (error) {
+                    alert(error.responseJSON.errorMessage);
+                    window.location.href = "/login";
                 }
                 })   
             }
         }
+        // 댓글 수정
         function modifyComment(commentId) {
             if ($('#btn-modify'+commentId).text() === '수정완료') {
                 $.ajax({
@@ -192,10 +197,15 @@
                             alert(response["result"]) 
                         }
                         window.location.reload()
-                    }
+                    },
+                    error: function (error) {
+                    alert(error.responseJSON.errorMessage);
+                    window.location.href = "/login";
+                }
                     
                 })
             }
+            
             let baseComment = $('#desc'+commentId).text() 
             $('#desc'+commentId).empty()
             $("#desc"+commentId).append(`<textarea id="newDesc">${baseComment}</textarea>`);
@@ -204,19 +214,8 @@
             
             
         }
-        function makePost() {
-            window.location.href = '/new'
-        }
-        function modifyPost() {
-            window.location.href = `/modify/${postId}` 
-        }
-        function alert() {
-            if (localStorage.getItem("token")===null) {
-                alert("로그인이 필요한 기능입니다")
-                window.location.href = 'login'
-            }
-        }
-          function logout() {
+        // 로그아웃 (로컬스토리지 비워주기)
+        function logout() {
         localStorage.clear();
         window.location.href = '/';
         }
@@ -238,7 +237,7 @@
         <br>
         <div class="form-group">
             <label for="exampleFormControlTextarea1">댓글입력</label>
-            <textarea onclick="alert()" class="form-control" id="comment" rows="3"></textarea>
+            <textarea class="form-control" id="comment" rows="3"></textarea>
         </div>
 
         <button class="btn btn-primary" onclick="post_comment()">댓글저장</button>
